@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --color-default: #cfd2da;
+  --color-hover: white;
+}
+
+body {
+  visibility: hidden;
+  user-select: none;
+  white-space: nowrap;
+  margin: 0;
+  user-select: none;
+  overflow: hidden;
+}
+
+#vignette {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 70% at center,
+    transparent 30%,
+    rgba(0, 0, 0, 0.2) 55%,
+    rgba(0, 0, 0, 0.45) 75%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+
+#vignette.active {
+  opacity: 1;
+}
+
+p {
+  margin: 0;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 40;
+}
+
+#eye {
+  display: none;
+}
+
+.eye-hover {
+  display: none;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  cursor: default;
+}
+
+#options-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+#options-wrapper.locked {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.option-container {
+  color: var(--color-default);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: "Nunito";
+  background: linear-gradient(
+    90deg,
+    rgba(20, 20, 20, 0.7) 0%,
+    rgba(20, 20, 20, 0.6) 66%,
+    rgba(47, 48, 53, 0) 100%
+  );
+  font-size: 11pt;
+  line-height: 22pt;
+  vertical-align: middle;
+  margin: 2pt;
+  transition: 300ms;
+  transform-origin: left top;
+  scale: 1;
+  height: 22pt;
+  width: 150pt;
+  top: 0;
+}
+
+.option-container:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(30, 30, 30, 0.7) 0%,
+    rgba(30, 30, 30, 0.6) 66%,
+    rgba(57, 58, 63, 0) 100%
+  );
+  transform-origin: left top;
+  color: var(--color-hover);
+  margin-left: 4pt;
+}
+
+.option-icon {
+  font-size: 12pt;
+  line-height: 22pt;
+  width: 14pt;
+  margin: 5pt;
+  color: var(--color-default);
+}
+
+.option-label {
+  font-weight: 500;
+}
