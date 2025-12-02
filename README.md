@@ -2,6 +2,12 @@
 
 > **This is a modified fork of [ox_target](https://github.com/overextended/ox_target) with cursor-based targeting instead of the traditional "eye" icon system.**
 
+
+## Video Preview
+https://github.com/user-attachments/assets/7f586163-bd78-4d11-b899-b8e32484c75d
+
+
+
 ## 🎯 What's Different
 
 - **Cursor-based interaction** - Uses a mouse cursor instead of a centered eye icon
