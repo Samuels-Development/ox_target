@@ -154,6 +154,7 @@ local function startTargeting()
     local optionsLocked = false
     local lockTime = 0
     local lockedMaxDistance = 7
+    local lockedTargetCoords = nil
     local outlinedEntity = nil
 
     CreateThread(function()
@@ -212,6 +213,8 @@ local function startTargeting()
                     end
                 end
 
+                lockedTargetCoords = currentTarget.coords
+
                 SendNuiMessage('{"event": "lockOptions"}')
             end
 
@@ -228,17 +231,13 @@ local function startTargeting()
         end
 
         if optionsLocked then
-            if GetGameTimer() - lockTime < 500 then
-                Wait(50)
-                goto continue
-            end
-
             local playerCoords = GetEntityCoords(cache.ped)
-            local distanceToTarget = #(playerCoords - currentTarget.coords)
+            local distanceToTarget = #(playerCoords - lockedTargetCoords)
 
             if distanceToTarget > lockedMaxDistance then
                 optionsLocked = false
                 lockTime = 0
+                lockedTargetCoords = nil
                 SendNuiMessage('{"event": "unlockOptions"}')
                 SendNuiMessage('{"event": "leftTarget"}')
                 hasTarget = false
@@ -246,13 +245,18 @@ local function startTargeting()
                 goto continue
             end
 
-            -- Only check cursor distance when locked - don't unlock for nearby zones/entities
+            if GetGameTimer() - lockTime < 500 then
+                Wait(50)
+                goto continue
+            end
+
             local _, _, cursorCoords = utils.raycastFromCursor(flag, 20)
-            local cursorDistFromTarget = #(cursorCoords - currentTarget.coords)
+            local cursorDistFromTarget = #(cursorCoords - lockedTargetCoords)
 
             if cursorDistFromTarget > lockedMaxDistance then
                 optionsLocked = false
                 lockTime = 0
+                lockedTargetCoords = nil
                 SendNuiMessage('{"event": "unlockOptions"}')
                 SendNuiMessage('{"event": "leftTarget"}')
                 hasTarget = false
