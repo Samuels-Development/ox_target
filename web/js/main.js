@@ -7,6 +7,7 @@ const body = document.body;
 let mouseX = window.innerWidth / 2;
 let mouseY = window.innerHeight / 2;
 let isLocked = false;
+let hideTimeout = null;
 
 document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
@@ -35,6 +36,10 @@ window.addEventListener("message", (event) => {
   switch (event.data.event) {
     case "visible": {
       if (event.data.state) {
+        if (hideTimeout) {
+          clearTimeout(hideTimeout);
+          hideTimeout = null;
+        }
         body.style.visibility = "visible";
         if (event.data.vignette) {
           vignette.classList.add("active");
@@ -44,8 +49,9 @@ window.addEventListener("message", (event) => {
         optionsWrapper.innerHTML = "";
         isLocked = false;
         optionsWrapper.classList.remove("locked");
-        setTimeout(() => {
+        hideTimeout = setTimeout(() => {
           body.style.visibility = "hidden";
+          hideTimeout = null;
         }, 400);
       }
       return;

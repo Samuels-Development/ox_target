@@ -149,7 +149,8 @@ local function startTargeting()
     end
 
     local flag = 511
-    local hit, entityHit, endCoords, distance, lastEntity, entityType, entityModel, hasTarget, zonesChanged
+    local hit, entityHit, endCoords, distance, entityType, entityModel, hasTarget, zonesChanged
+    local lastEntity = -1
     local zones = {}
     local optionsLocked = false
     local lockTime = 0
@@ -184,6 +185,8 @@ local function startTargeting()
                 if IsDisabledControlJustPressed(0, 25) then
                     optionsLocked = false
                     lockTime = 0
+                    lockedTargetCoords = nil
+                    lastEntity = -1
                     SendNuiMessage('{"event": "unlockOptions"}')
                 end
             elseif hasTarget and IsDisabledControlJustPressed(0, mouseButton) then
@@ -232,12 +235,14 @@ local function startTargeting()
 
         if optionsLocked then
             local playerCoords = GetEntityCoords(cache.ped)
-            local distanceToTarget = #(playerCoords - lockedTargetCoords)
+            local _, _, raycastCoords = utils.raycastFromCursor(flag, 20)
+            local playerDistToTarget = #(playerCoords - raycastCoords)
 
-            if distanceToTarget > lockedMaxDistance then
+            if playerDistToTarget > lockedMaxDistance then
                 optionsLocked = false
                 lockTime = 0
                 lockedTargetCoords = nil
+                lastEntity = -1
                 SendNuiMessage('{"event": "unlockOptions"}')
                 SendNuiMessage('{"event": "leftTarget"}')
                 hasTarget = false
@@ -250,13 +255,13 @@ local function startTargeting()
                 goto continue
             end
 
-            local _, _, cursorCoords = utils.raycastFromCursor(flag, 20)
-            local cursorDistFromTarget = #(cursorCoords - lockedTargetCoords)
+            local cursorDistFromTarget = #(raycastCoords - lockedTargetCoords)
 
             if cursorDistFromTarget > lockedMaxDistance then
                 optionsLocked = false
                 lockTime = 0
                 lockedTargetCoords = nil
+                lastEntity = -1
                 SendNuiMessage('{"event": "unlockOptions"}')
                 SendNuiMessage('{"event": "leftTarget"}')
                 hasTarget = false
