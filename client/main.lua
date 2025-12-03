@@ -235,8 +235,7 @@ local function startTargeting()
 
         if optionsLocked then
             local playerCoords = GetEntityCoords(cache.ped)
-            local _, _, raycastCoords = utils.raycastFromCursor(flag, 20)
-            local playerDistToTarget = #(playerCoords - raycastCoords)
+            local playerDistToTarget = #(playerCoords - lockedTargetCoords)
 
             local allOptionsHidden = true
             for _, v in pairs(options) do
@@ -264,25 +263,6 @@ local function startTargeting()
             end
 
             if allOptionsHidden then
-                optionsLocked = false
-                lockTime = 0
-                lockedTargetCoords = nil
-                lastEntity = -1
-                SendNuiMessage('{"event": "unlockOptions"}')
-                SendNuiMessage('{"event": "leftTarget"}')
-                hasTarget = false
-                Wait(50)
-                goto continue
-            end
-
-            if GetGameTimer() - lockTime < 500 then
-                Wait(50)
-                goto continue
-            end
-
-            local cursorDistFromTarget = #(raycastCoords - lockedTargetCoords)
-
-            if cursorDistFromTarget > lockedMaxDistance then
                 optionsLocked = false
                 lockTime = 0
                 lockedTargetCoords = nil
