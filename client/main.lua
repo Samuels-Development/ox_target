@@ -234,6 +234,43 @@ local function startTargeting()
         end
 
         if optionsLocked then
+            if menuChanged then
+                for k, v in pairs(options) do
+                    for i = 1, #v do
+                        local option = v[i]
+                        option.hide = option.menuName ~= currentMenu
+                    end
+                end
+
+                if nearbyZones then
+                    for i = 1, #nearbyZones do
+                        local zoneOpts = nearbyZones[i].options
+                        for j = 1, #zoneOpts do
+                            local option = zoneOpts[j]
+                            option.hide = option.menuName ~= currentMenu
+                        end
+                    end
+                end
+
+                if currentMenu and options.__global[1]?.name ~= 'builtin:goback' then
+                    table.insert(options.__global, 1, {
+                        icon = 'fa-solid fa-circle-chevron-left',
+                        label = locale('go_back'),
+                        name = 'builtin:goback',
+                        menuName = currentMenu,
+                        openMenu = 'home'
+                    })
+                end
+
+                SendNuiMessage(json.encode({
+                    event = 'setTarget',
+                    options = options,
+                    zones = zones,
+                }, { sort_keys = true }))
+
+                menuChanged = false
+            end
+
             if GetGameTimer() - lockTime < 500 then
                 Wait(50)
                 goto continue

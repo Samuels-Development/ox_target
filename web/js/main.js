@@ -8,6 +8,8 @@ let mouseX = window.innerWidth / 2;
 let mouseY = window.innerHeight / 2;
 let isLocked = false;
 let hideTimeout = null;
+let lockedX = null;
+let lockedY = null;
 
 document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
@@ -48,6 +50,8 @@ window.addEventListener("message", (event) => {
         vignette.classList.remove("active");
         optionsWrapper.innerHTML = "";
         isLocked = false;
+        lockedX = null;
+        lockedY = null;
         optionsWrapper.classList.remove("locked");
         hideTimeout = setTimeout(() => {
           body.style.visibility = "hidden";
@@ -66,19 +70,21 @@ window.addEventListener("message", (event) => {
 
     case "lockOptions": {
       isLocked = true;
+      lockedX = optionsWrapper.style.left;
+      lockedY = optionsWrapper.style.top;
       optionsWrapper.classList.add("locked");
       return;
     }
 
     case "unlockOptions": {
       isLocked = false;
+      lockedX = null;
+      lockedY = null;
       optionsWrapper.classList.remove("locked");
       return;
     }
 
     case "setTarget": {
-      if (isLocked) return;
-
       optionsWrapper.innerHTML = "";
 
       if (event.data.options) {
@@ -97,7 +103,12 @@ window.addEventListener("message", (event) => {
         }
       }
 
-      requestAnimationFrame(updateOptionsPosition);
+      if (isLocked && lockedX !== null && lockedY !== null) {
+        optionsWrapper.style.left = lockedX;
+        optionsWrapper.style.top = lockedY;
+      } else {
+        requestAnimationFrame(updateOptionsPosition);
+      }
     }
   }
 });
