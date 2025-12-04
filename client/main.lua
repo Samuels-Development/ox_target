@@ -40,6 +40,7 @@ local debug = GetConvarInt('ox_target:debug', 0) == 1
 local drawOutline = GetConvarInt('ox_target:drawOutline', 1) == 1
 local outlineDistance = GetConvarInt('ox_target:outlineDistance', 5)
 local outlineUseTargetDistance = GetConvarInt('ox_target:outlineUseTargetDistance', 1) == 1
+local closeOnSelect = GetConvarInt('ox_target:closeOnSelect', 1) == 1
 local outlineColor = {255, 255, 255, 255}
 local outlineColorStr = GetConvar('ox_target:outlineColor', '255,255,255,255')
 for i, v in ipairs({string.strsplit(',', outlineColorStr)}) do
@@ -624,7 +625,7 @@ RegisterNUICallback('select', function(data, cb)
         if option.menuName == 'home' then return end
     end
 
-    if not option?.openMenu and IsNuiFocused() then
+    if closeOnSelect and not option?.openMenu and IsNuiFocused() then
         state.setActive(false)
     end
 end)

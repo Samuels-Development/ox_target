@@ -47,6 +47,10 @@ setr ox_target:vignette 0
 
 # Center cursor on screen when targeting starts (default: 1 = enabled)
 setr ox_target:centerCursor 0
+
+# Close target menu after selecting an option (default: 1 = enabled)
+# Set to 0 to keep the menu open, allowing multiple option clicks
+setr ox_target:closeOnSelect 0
 ```
 
 ---
