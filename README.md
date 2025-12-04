@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/7f586163-bd78-4d11-b899-b8e32484c75d
 ### How It Works
 1. Hold targeting key (default: Left Alt) - cursor appears, vignette effect activates
 2. Hover over targets - options appear (faded) and follow your cursor
-3. Click to lock - options become solid and clickable
+3. Click to lock - options become solid and clickable (you can press right-click to unlock an option and then target something else, without having to re-press the targeting key.
 4. Select an option or right-click to cancel
 
 ### Configuration
