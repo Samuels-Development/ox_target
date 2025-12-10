@@ -56,6 +56,33 @@ function utils.raycastFromCursor(flag, distance)
     end
 end
 
+---Raycast from cursor that includes the player's own ped (doesn't ignore it)
+---@param distance number? Max raycast distance (default 10)
+---@return boolean hit
+---@return number entityHit
+---@return vector3 endCoords
+function utils.raycastFromCursorIncludeSelf(distance)
+    local cursorX, cursorY = GetNuiCursorPosition()
+    local screenW, screenH = GetActiveScreenResolution()
+    local screenX = cursorX / screenW
+    local screenY = cursorY / screenH
+
+    local coords, normal = GetWorldCoordFromScreenCoord(screenX, screenY)
+    local destination = coords + normal * (distance or 10)
+
+    local handle = StartShapeTestLosProbe(coords.x, coords.y, coords.z, destination.x, destination.y, destination.z,
+        30, 0, 4)
+
+    while true do
+        Wait(0)
+        local retval, hit, endCoords, surfaceNormal, materialHash, entityHit = GetShapeTestResultIncludingMaterial(handle)
+
+        if retval ~= 1 then
+            return hit == 1, entityHit, endCoords
+        end
+    end
+end
+
 function utils.getTexture()
     return lib.requestStreamedTextureDict('shared'), 'emptydot_32'
 end

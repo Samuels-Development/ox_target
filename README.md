@@ -17,6 +17,7 @@ https://github.com/user-attachments/assets/7f586163-bd78-4d11-b899-b8e32484c75d
 - **Smart auto-unlock** - Moving cursor to a different target automatically switches focus
 - **Cinematic vignette** - Screen edges darken when targeting mode is active
 - **Camera lock** - Camera stays fixed while targeting for precise cursor control
+- **Self-targeting** - Add target options to your own ped for inventory, emotes, etc.
 
 ### How It Works
 1. Hold targeting key (default: Left Alt) - cursor appears, vignette effect activates
@@ -51,6 +52,86 @@ setr ox_target:centerCursor 0
 # Close target menu after selecting an option (default: 1 = enabled)
 # Set to 0 to keep the menu open, allowing multiple option clicks
 setr ox_target:closeOnSelect 0
+```
+
+---
+
+## 🧍 Self-Target
+
+Target your own ped with custom options - useful for inventory, emotes, status checks, etc.
+
+### Adding Self-Target Options
+
+```lua
+exports.ox_target:addSelfTarget({
+    {
+        name = 'check_inventory',
+        icon = 'fa-solid fa-backpack',
+        label = 'Check Inventory',
+        onSelect = function(data)
+            print('Opening inventory...')
+            -- data.entity = your ped handle
+            -- data.isSelf = true
+        end
+    },
+    {
+        name = 'play_emote',
+        icon = 'fa-solid fa-face-smile',
+        label = 'Emotes',
+        onSelect = function(data)
+            -- Open emote menu
+        end
+    }
+})
+```
+
+### Removing Self-Target Options
+
+```lua
+-- Remove a single option by name
+exports.ox_target:removeSelfTarget('check_inventory')
+
+-- Remove multiple options
+exports.ox_target:removeSelfTarget({ 'check_inventory', 'play_emote' })
+```
+
+### How It Works
+
+1. Register self-target options using `addSelfTarget`
+2. Enter targeting mode (hold Left Alt)
+3. Move your cursor over your own ped/body on screen
+4. Your self-target options will appear when hovering over any part of your body
+5. Click to interact
+
+### Callback Data
+
+When a self-target option is selected, the callback receives:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `entity` | `number` | Your ped handle (`PlayerPedId()`) |
+| `coords` | `vector3` | World coordinates where cursor hit |
+| `isSelf` | `boolean` | Always `true` for self-targets |
+
+### Conditional Options
+
+You can use `canInteract` to conditionally show/hide self-target options:
+
+```lua
+exports.ox_target:addSelfTarget({
+    {
+        name = 'heal_self',
+        icon = 'fa-solid fa-kit-medical',
+        label = 'Use Medkit',
+        canInteract = function(entity, distance, coords, name)
+            -- Only show if player has a medkit item
+            return exports.ox_inventory:Search('count', 'medkit') > 0
+        end,
+        onSelect = function(data)
+            -- Use medkit logic
+        end
+    }
+})
 ```
 
 ---

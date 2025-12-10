@@ -47,6 +47,8 @@ for i, v in ipairs({string.strsplit(',', outlineColorStr)}) do
     outlineColor[i] = tonumber(v) or 255
 end
 local vec0 = vec3(0, 0, 0)
+local SELF_TARGET_ID = -2
+local selfTargetOptions = api.getSelfTargetOptions()
 
 ---@param option OxTargetOption
 ---@param distance number
@@ -355,6 +357,19 @@ local function startTargeting()
             end
         end
 
+        local isSelfTarget = false
+        if next(selfTargetOptions) then
+            local selfHit, selfEntity, selfCoords = utils.raycastFromCursorIncludeSelf(10)
+
+            if selfEntity == cache.ped then
+                entityHit = SELF_TARGET_ID
+                isSelfTarget = true
+                entityType = 1
+                endCoords = selfCoords
+                distance = #(playerCoords - selfCoords)
+            end
+        end
+
         nearbyZones, zonesChanged = utils.getNearbyZones(endCoords)
 
         local entityChanged = entityHit ~= lastEntity
@@ -400,20 +415,23 @@ local function startTargeting()
             hasTarget = false
         end
 
-        if newOptions and entityModel and entityHit > 0 then
+        if newOptions and isSelfTarget then
+            options:setSelf()
+        elseif newOptions and entityModel and entityHit > 0 then
             options:set(entityHit, entityType, entityModel)
         end
 
         lastEntity = entityHit
-        currentTarget.entity = entityHit
+        currentTarget.entity = isSelfTarget and cache.ped or entityHit
         currentTarget.coords = endCoords
         currentTarget.distance = distance
+        currentTarget.isSelf = isSelfTarget
         local hidden = 0
         local totalOptions = 0
 
         for k, v in pairs(options) do
             local optionCount = #v
-            local dist = k == '__global' and 0 or distance
+            local dist = (k == '__global' or k == 'selfTarget') and 0 or distance
             totalOptions += optionCount
 
             for i = 1, optionCount do
@@ -589,7 +607,6 @@ RegisterNUICallback('select', function(data, cb)
     local option = zone and zone.options[data[2]] or options[data[1]][data[2]]
 
     if option then
-        -- Validate distance before allowing interaction
         local maxDistance = option.distance or 7
         if currentTarget.distance and currentTarget.distance > maxDistance then
             return

@@ -228,6 +228,23 @@ function api.removeGlobalPlayer(options)
 end
 
 ---@type table<number, OxTargetOption[]>
+local selfTarget = {}
+
+---@param options OxTargetOption | OxTargetOption[]
+function api.addSelfTarget(options)
+    addTarget(selfTarget, options, GetInvokingResource())
+end
+
+---@param options string | string[]
+function api.removeSelfTarget(options)
+    removeTarget(selfTarget, options, GetInvokingResource())
+end
+
+rawset(api, 'getSelfTargetOptions', function()
+    return selfTarget
+end)
+
+---@type table<number, OxTargetOption[]>
 local models = {}
 
 ---@param arr (number | string) | (number | string)[]
@@ -438,6 +455,7 @@ function options_mt:wipe()
     self.model = nil
     self.entity = nil
     self.localEntity = nil
+    self.selfTarget = nil
 
     if self.__global[1]?.name == 'builtin:goback' then
         table.remove(self.__global, 1)
@@ -469,6 +487,12 @@ function options_mt:set(entity, _type, model)
     if self.model then options_mt.size += 1 end
     if self.entity then options_mt.size += 1 end
     if self.localEntity then options_mt.size += 1 end
+end
+
+function options_mt:setSelf()
+    self:wipe()
+    self.selfTarget = selfTarget
+    options_mt.size += 1
 end
 
 ---@type OxTargetOption[]
