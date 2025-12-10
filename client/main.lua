@@ -54,12 +54,12 @@ local vec0 = vec3(0, 0, 0)
 ---@param entityHit? number
 ---@param entityType? number
 ---@param entityModel? number | false
-local function shouldHide(option, distance, endCoords, entityHit, entityType, entityModel)
+local function shouldHide(option, distance, endCoords, entityHit, entityType, entityModel, zoneDistance)
     if option.menuName ~= currentMenu then
         return true
     end
 
-    if distance > (option.distance or 7) then
+    if distance > (zoneDistance or option.distance or 7) then
         return true
     end
 
@@ -432,14 +432,15 @@ local function startTargeting()
         if zonesChanged then table.wipe(zones) end
 
         for i = 1, #nearbyZones do
-            local zoneOptions = nearbyZones[i].options
+            local zone = nearbyZones[i]
+            local zoneOptions = zone.options
             local optionCount = #zoneOptions
             totalOptions += optionCount
             zones[i] = zoneOptions
 
             for j = 1, optionCount do
                 local option = zoneOptions[j]
-                local hide = shouldHide(option, distance, endCoords, entityHit)
+                local hide = shouldHide(option, distance, endCoords, entityHit, nil, nil, zone.distance)
 
                 if option.hide ~= hide then
                     option.hide = hide
@@ -588,6 +589,12 @@ RegisterNUICallback('select', function(data, cb)
     local option = zone and zone.options[data[2]] or options[data[1]][data[2]]
 
     if option then
+        -- Validate distance before allowing interaction
+        local maxDistance = option.distance or 7
+        if currentTarget.distance and currentTarget.distance > maxDistance then
+            return
+        end
+
         if option.openMenu then
             local menuDepth = #menuHistory
 
