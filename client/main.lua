@@ -56,12 +56,12 @@ local selfTargetOptions = api.getSelfTargetOptions()
 ---@param entityHit? number
 ---@param entityType? number
 ---@param entityModel? number | false
-local function shouldHide(option, distance, endCoords, entityHit, entityType, entityModel, zoneDistance)
+local function shouldHide(option, distance, endCoords, entityHit, entityType, entityModel)
     if option.menuName ~= currentMenu then
         return true
     end
 
-    if distance > (zoneDistance or option.distance or 7) then
+    if distance > (option.distance or 7) then
         return true
     end
 
@@ -294,7 +294,7 @@ local function startTargeting()
                 for i = 1, #v do
                     hasAnyOptions = true
                     local opt = v[i]
-                    if playerDistToTarget <= (opt.distance or 5.0) + 1.0 then
+                    if playerDistToTarget <= (opt.distance or 7) then
                         allOptionsHidden = false
                         break
                     end
@@ -308,7 +308,7 @@ local function startTargeting()
                     for j = 1, #zoneOpts do
                         hasAnyOptions = true
                         local opt = zoneOpts[j]
-                        if playerDistToTarget <= (opt.distance or 5.0) + 1.0 then
+                        if playerDistToTarget <= (opt.distance or 7) then
                             allOptionsHidden = false
                             break
                         end
@@ -450,15 +450,14 @@ local function startTargeting()
         if zonesChanged then table.wipe(zones) end
 
         for i = 1, #nearbyZones do
-            local zone = nearbyZones[i]
-            local zoneOptions = zone.options
+            local zoneOptions = nearbyZones[i].options
             local optionCount = #zoneOptions
             totalOptions += optionCount
             zones[i] = zoneOptions
 
             for j = 1, optionCount do
                 local option = zoneOptions[j]
-                local hide = shouldHide(option, distance, endCoords, entityHit, nil, nil, zone.distance)
+                local hide = shouldHide(option, distance, endCoords, entityHit)
 
                 if option.hide ~= hide then
                     option.hide = hide
@@ -630,6 +629,10 @@ RegisterNUICallback('select', function(data, cb)
             currentMenu = option.openMenu ~= 'home' and option.openMenu or nil
 
             options:wipe()
+
+            if currentTarget.isSelf then
+                options:setSelf()
+            end
         end
 
         currentTarget.zone = zone?.id
