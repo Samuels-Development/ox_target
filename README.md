@@ -136,6 +136,46 @@ exports.ox_target:addSelfTarget({
 
 ---
 
+## 🚫 Disabling Targeting (Resource Conflicts)
+
+ox_target uses Left Alt by default, which can interfere with other resources that also use this key (e.g., lb-phone camera free-view, cinematic cams, etc.).
+
+To prevent conflicts, other resources can temporarily disable ox_target when they need exclusive use of the Alt key:
+
+### Disable/Enable Targeting
+
+```lua
+-- Disable ox_target (e.g., when entering camera free-view mode)
+exports.ox_target:disableTargeting(true)
+
+-- Re-enable ox_target (e.g., when exiting camera free-view mode)
+exports.ox_target:disableTargeting(false)
+```
+
+### Safe Implementation (Optional Check)
+
+If you want to make it optional in case ox_target isn't running:
+
+```lua
+local function setTargetDisabled(disabled)
+    if GetResourceState('ox_target') == 'started' then
+        exports.ox_target:disableTargeting(disabled)
+    end
+end
+
+-- Usage
+setTargetDisabled(true)  -- Disable
+setTargetDisabled(false) -- Enable
+```
+
+### Check if Targeting is Active
+
+```lua
+local isActive = exports.ox_target:isActive()
+```
+
+---
+
 ## Original ox_target
 
 ![](https://img.shields.io/github/downloads/overextended/ox_target/total?logo=github)
