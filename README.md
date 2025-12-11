@@ -138,7 +138,7 @@ exports.ox_target:addSelfTarget({
 
 ## 🚫 Disabling Targeting (Resource Conflicts)
 
-ox_target uses Left Alt by default, which can interfere with other resources that also use this key (e.g., lb-phone camera free-view, cinematic cams, etc.).
+ox_target uses Left Alt by default and because this fork sets NUI focus to true to show the cursor, it can interfere with other resources that also use this key (e.g., lb-phone camera free-view, cinematic cams, etc.).
 
 To prevent conflicts, other resources can temporarily disable ox_target when they need exclusive use of the Alt key:
 
