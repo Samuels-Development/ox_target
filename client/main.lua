@@ -239,10 +239,14 @@ local function startTargeting()
 
         if optionsLocked then
             if menuChanged then
+                local playerCoords = GetEntityCoords(cache.ped)
+                local distance = lockedTargetCoords and #(playerCoords - lockedTargetCoords) or currentTarget.distance or 0
+
                 for k, v in pairs(options) do
+                    local dist = (k == '__global' or k == 'selfTarget') and 0 or distance
                     for i = 1, #v do
                         local option = v[i]
-                        option.hide = option.menuName ~= currentMenu
+                        option.hide = shouldHide(option, dist, lockedTargetCoords or currentTarget.coords, currentTarget.entity, currentTarget.entityType, currentTarget.entityModel)
                     end
                 end
 
@@ -251,7 +255,7 @@ local function startTargeting()
                         local zoneOpts = nearbyZones[i].options
                         for j = 1, #zoneOpts do
                             local option = zoneOpts[j]
-                            option.hide = option.menuName ~= currentMenu
+                            option.hide = shouldHide(option, distance, lockedTargetCoords or currentTarget.coords, currentTarget.entity, currentTarget.entityType, currentTarget.entityModel)
                         end
                     end
                 end
