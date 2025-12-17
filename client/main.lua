@@ -427,6 +427,8 @@ local function startTargeting()
         currentTarget.coords = endCoords
         currentTarget.distance = distance
         currentTarget.isSelf = isSelfTarget
+        currentTarget.entityType = entityType
+        currentTarget.entityModel = entityModel
         local hidden = 0
         local totalOptions = 0
 
@@ -633,6 +635,8 @@ RegisterNUICallback('select', function(data, cb)
 
             if currentTarget.isSelf then
                 options:setSelf()
+            elseif currentTarget.entity and currentTarget.entity > 0 and currentTarget.entityModel then
+                options:set(currentTarget.entity, currentTarget.entityType, currentTarget.entityModel)
             end
         end
 
