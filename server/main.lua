@@ -1,4 +1,6 @@
-lib.versionCheck('overextended/ox_target')
+-- This is a fork with its own release cycle; comparing against the upstream
+-- repository advertises releases that will never apply to this resource.
+lib.versionCheck('Samuels-Development/ox_target')
 
 if not lib.checkDependency('ox_lib', '3.30.0', true) then return end
 
