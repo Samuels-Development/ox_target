@@ -380,6 +380,11 @@ local function startTargeting()
         local entityChanged = entityHit ~= lastEntity
         local newOptions = (zonesChanged or entityChanged or menuChanged) and true
 
+        -- entities reset the menu below, but self-targets never enter that branch
+        if isSelfTarget and entityChanged then
+            currentMenu = nil
+        end
+
         if entityHit > 0 and entityChanged then
             currentMenu = nil
 
